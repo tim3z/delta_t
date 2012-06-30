@@ -1,0 +1,84 @@
+require 'helper'
+
+class TimeDiff
+  # exposing internals for better testing
+  # current implementation: [y,m,d,h,m,s]
+  def diff
+    @diff.reverse
+  end
+end
+
+class TimeDiffTest < Test::Unit::TestCase
+
+  # caution - depends on current time so if buggy non deterministic
+  def test_simple_difference
+    dif = TimeDiff.new(Time.zone.now, (1.days + 3.hours).ago)
+    assert_equal 0, dif.years
+    assert_equal 0, dif.months
+    assert_equal 1, dif.days
+    assert_equal 3, dif.hours
+    assert_equal 0, dif.minutes
+    assert_equal 0, dif.seconds
+  end
+
+  def test_overlapping_difference
+    assert_equal [0,0,0,0,0,2], TimeDiff.new(Time.new(2000, 1, 1, 0, 1 , 1), Time.new(2000, 1, 1, 0, 0, 59)).diff
+    assert_equal [0,0,2,0,0,0], TimeDiff.new(Time.new(2000, 2, 1), Time.new(2000, 1, 30)).diff
+  end
+
+  def test_negative_difference
+    assert_equal [1, 2, 10, 0, 3, 2], TimeDiff.new(Time.new(2001, 6, 15, 10, 4, 1), Time.new(2000, 4, 5, 10, 0, 59)).diff
+    assert_equal [-1, -2, -10, 0, -3, -2], TimeDiff.new(Time.new(2000, 4, 5, 10, 0, 59), Time.new(2001, 6, 15, 10, 4, 1)).diff
+  end
+
+  def test_init
+    assert_equal [1,2,3,4,5,6], TimeDiff.new(years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6).diff
+    assert_equal [1,0,3,0,0,0], TimeDiff.new(years: 1, days: 3).diff
+    assert_equal [1,0,0,0,0,0], TimeDiff.new(years: 1).diff
+  end
+
+  def test_equals
+    t = TimeDiff.new(years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6)
+    assert t == t
+    assert t != -t
+  end
+
+  def test_total
+    assert_equal 48, TimeDiff.new(days: 2).total_hours
+    assert_equal 62, TimeDiff.new(months: 2, days: 2).total_days
+    dif = TimeDiff.new(months: 2, days: 2, hours: 5, minutes: 7, seconds: 1)
+    assert_equal 62, dif.total_days
+    assert_equal 5375221, dif.total_seconds
+  end
+
+  def test_normalization
+    assert_equal [0,1,21,0,0,0], TimeDiff.new(days: 51).diff
+    assert_equal [0,1,10,18,5,0], TimeDiff.new(minutes: 60*24*40 + 60*18 + 5).diff
+    assert_equal [0,-1,-10,-18,-5,0], TimeDiff.new(minutes: -(60*24*40 + 60*18 + 5)).diff
+  end
+
+  def test_to_hash
+    h = {years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6}
+    assert_equal h, TimeDiff.new(h).to_hash
+  end
+
+  def test_operators
+    assert_equal [1,3,0,0,0,0], (TimeDiff.new(months: 11) + TimeDiff.new(months: 4)).diff
+    assert_equal [0,7,0,0,0,0], (TimeDiff.new(months: 11) - TimeDiff.new(months: 4)).diff
+    assert_equal [2,9,0,0,0,0], (TimeDiff.new(months: 11) * 3).diff
+  end
+
+  def test_time_operators
+    before = Time.new 2001, 4, 3, 12, 23, 55
+    after = Time.new 2012, 12, 21, 0, 0, 0
+    assert_equal after, before + TimeDiff.new(after, before)
+    assert_equal after, TimeDiff.new(after, before) + before
+    assert_equal before, after - TimeDiff.new(after, before)
+    assert_equal before, -TimeDiff.new(after, before) + after
+
+    assert_equal after, before + (after - before)
+    assert_equal after, after - before + before
+    assert_equal before, after - (after - before)
+    assert_equal before, -(after - before) + after
+  end
+end

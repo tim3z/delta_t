@@ -14,4 +14,8 @@ Gem::Specification.new do |gem|
   gem.name          = "delta_t"
   gem.require_paths = ["lib"]
   gem.version       = DeltaT::VERSION
+
+  gem.add_development_dependency 'rake'
+
+  gem.add_runtime_dependency 'activesupport'
 end
