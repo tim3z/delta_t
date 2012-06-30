@@ -1,6 +1,6 @@
 # DeltaT
 
-TODO: Write a gem description
+DeltaT provides an interface to represent time differences and make calculations with them nice and easy.
 
 ## Installation
 
