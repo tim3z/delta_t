@@ -70,6 +70,18 @@ class TimeDiff
     self * -1
   end
 
+  def to_i
+    total_seconds
+  end
+
+  def to_f
+    to_i.to_f
+  end
+
+  def coerce other
+    return other, self.total_seconds
+  end
+
   def to_hash
     h = {}
     UNITS.each do |unit|

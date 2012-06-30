@@ -1,4 +1,4 @@
-require 'helper'
+require File.dirname(__FILE__) + '/helper'
 
 class TimeDiff
   # exposing internals for better testing
@@ -8,11 +8,11 @@ class TimeDiff
   end
 end
 
-class TimeDiffTest < Test::Unit::TestCase
+class DeltaTTest < Test::Unit::TestCase
 
   # caution - depends on current time so if buggy non deterministic
   def test_simple_difference
-    dif = TimeDiff.new(Time.zone.now, (1.days + 3.hours).ago)
+    dif = TimeDiff.new(Time.now, (1.days + 3.hours).ago)
     assert_equal 0, dif.years
     assert_equal 0, dif.months
     assert_equal 1, dif.days
