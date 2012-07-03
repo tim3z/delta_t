@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Tim 'S.D.Eagle' Zeitz"]
   gem.email         = ["dev.tim.zeitz@gmail.com"]
   gem.description   = %q{Making time difference calculations fun}
-  gem.summary       = %q{Provides a class to represent time differences and make calculations nice and easy}
+  gem.summary       = %q{Provides a class to represent time differences and make duration calculations nice and easy}
   gem.homepage      = "https://github.com/SDEagle/delta_t"
 
   gem.files         = `git ls-files`.split($\)

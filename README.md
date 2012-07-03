@@ -1,6 +1,6 @@
 # DeltaT
 
-DeltaT provides an interface to represent time differences and make calculations with them nice and easy.
+DeltaT provides an interface to represent time differences and make duration calculations nice and easy.
 
 ## Installation
 

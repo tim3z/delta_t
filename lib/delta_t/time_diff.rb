@@ -2,6 +2,8 @@ module DeltaT
   class TimeDiff
     UNITS = [:n_secs, :seconds, :minutes, :hours, :days, :months, :years]
 
+    ##
+    # Create a new TimeDiff either by two Time like objects or an hash with values for the time units (keys: seconds, minutes, hours, days, months, years)
     def initialize *args
       if args.size == 1 && args[0].class == Hash
         @diff = [0,0,0,0,0,0,0]
@@ -33,6 +35,8 @@ module DeltaT
       end
     end
 
+    ##
+    # checks if two TimeDiffs are equal
     def == other
       eql = true
       UNITS.each do |unit|
@@ -41,6 +45,8 @@ module DeltaT
       eql
     end
 
+    ##
+    # Either adds two TimeDiffs together or advances a time by this TimeDiff
     def + other
       if other.class == TimeDiff
         TimeDiff.new(other.to_hash).add_array @diff
@@ -51,6 +57,8 @@ module DeltaT
       end
     end
 
+    ##
+    # Subtracts the other TimeDiff from this one
     def - other
       if other.class == TimeDiff
         self + (-other)
@@ -59,6 +67,8 @@ module DeltaT
       end
     end
 
+    ##
+    # multiplies the duration of this TimeDiff with the given scalar. Must be an integer
     def * scalar
       unless scalar.integer?
         raise ArgumentError, "Only integer calculations possible", caller
@@ -69,14 +79,20 @@ module DeltaT
       result.normalize!
     end
 
+    ##
+    # Equivalent to *-1
     def -@
       self * -1
     end
 
+    ##
+    # Returns an integer representing this TimeDiff - the total number of seconds
     def to_i
       total_seconds
     end
 
+    ##
+    # Returns an float representing this TimeDiff - the total number of seconds with smaller units as decimals
     def to_f
       to_i.to_f + @diff[0] * 0.000000001
     end
@@ -85,6 +101,8 @@ module DeltaT
       return other, self.to_f
     end
 
+    ##
+    # Returns an hash with all different time durations with each ones value
     def to_hash
       h = {}
       UNITS.each do |unit|
