@@ -8,7 +8,7 @@ class TimeDiff
     elsif args.size == 2 && args[0].respond_to?(:to_time) && args[1].respond_to?(:to_time)
       apply_time_diff args[0].to_time, args[1].to_time
     else
-      raise ArgumentError, "Arguments neither to times nor a hash", caller
+      raise ArgumentError, "Arguments neither two times nor a hash", caller
     end
   end
 

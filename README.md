@@ -42,7 +42,7 @@ Furthermore either all time amounts will be positive or negative
     diff.years # => 0
     diff.months # => -3
 
-You can create TimeDiffs with the Differences of two times or with a hash
+You can create TimeDiffs with the differences of two times or with a hash
 
     diff = TimeDiff.new(hours: 1, seconds: 5)
     diff.seconds # => 5
@@ -62,7 +62,7 @@ You can do calculations with TimeDiffs
 
     diff * -1 == -diff # => true
 
-When calculating a TimeDiff from two Time the Day - Month foobar will be handled correctly
+When calculating a TimeDiff from two Time the day - month foobar will be handled correctly
 
     (Time.new(2012,4,2) - Time.new(2012,3,31)).days # => 2
 
@@ -74,7 +74,7 @@ You can apply TimeDiffs to Time objects
 
 Concluding: the following equation should always be true
 
-    (sometime - othertime) + othertime == sometime
+    (sometime - othertime) + othertime == sometime # => true
 
 
 ## Contributing
