@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["dev.tim.zeitz@gmail.com"]
   gem.description   = %q{Making time difference calculations fun}
   gem.summary       = %q{Provides a class to represent time differences and make calculations nice and easy}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/SDEagle/delta_t"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
