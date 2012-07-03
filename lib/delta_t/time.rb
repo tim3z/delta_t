@@ -3,7 +3,7 @@ class Time
   old_minus = instance_method :-
 
   define_method :+  do |other|
-    if other.class == TimeDiff
+    if other.class == DeltaT::TimeDiff
       other + self
     else
       old_plus.bind(self).(other)
@@ -11,10 +11,10 @@ class Time
   end
 
   define_method :-  do |other|
-    if other.class == TimeDiff
+    if other.class == DeltaT::TimeDiff
       (other*-1) + self
     elsif other.respond_to? :to_time
-      TimeDiff.new self, other
+      DeltaT::TimeDiff.new self, other
     else
       old_minus.bind(self).(other)
     end

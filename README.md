@@ -77,6 +77,7 @@ Concluding: the following equation should always be true
     (sometime - othertime) + othertime == sometime # => true
 
 
+The TimeDiff class is in the DeltaT Module so normally you would have to use DeltaT::TimeDiff
 For further examples have a look into the tests
 
 
