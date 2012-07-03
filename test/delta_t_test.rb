@@ -2,9 +2,10 @@ require File.dirname(__FILE__) + '/helper'
 
 class DeltaT::TimeDiff
   # exposing internals for better testing
+  # nano secs are ignored cause they are just implemented for compatibility with old play time diff
   # current implementation: [y,m,d,h,m,s]
   def diff
-    @diff.reverse
+    @diff.reverse[0..-2]
   end
 end
 
@@ -12,7 +13,8 @@ class DeltaTTest < Test::Unit::TestCase
 
   # caution - depends on current time so if buggy non deterministic
   def test_simple_difference
-    dif = DeltaT::TimeDiff.new(Time.now, (1.days + 3.hours).ago)
+    now = Time.now
+    dif = DeltaT::TimeDiff.new(now, now - (1.days + 3.hours))
     assert_equal 0, dif.years
     assert_equal 0, dif.months
     assert_equal 1, dif.days
@@ -58,7 +60,7 @@ class DeltaTTest < Test::Unit::TestCase
   end
 
   def test_to_hash
-    h = {years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6}
+    h = {years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6, n_secs: 0}
     assert_equal h, DeltaT::TimeDiff.new(h).to_hash
   end
 

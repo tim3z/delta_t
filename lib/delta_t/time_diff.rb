@@ -1,11 +1,11 @@
 module DeltaT
   class TimeDiff
-    UNITS = [:seconds, :minutes, :hours, :days, :months, :years]
+    UNITS = [:n_secs, :seconds, :minutes, :hours, :days, :months, :years]
 
     def initialize *args
       if args.size == 1 && args[0].class == Hash
-        @diff = [0,0,0,0,0,0]
-        add_array [args[0][:seconds], args[0][:minutes], args[0][:hours], args[0][:days], args[0][:months], args[0][:years]]
+        @diff = [0,0,0,0,0,0,0]
+        add_array [0, args[0][:seconds], args[0][:minutes], args[0][:hours], args[0][:days], args[0][:months], args[0][:years]]
       elsif args.size == 2 && args[0].respond_to?(:to_time) && args[1].respond_to?(:to_time)
         apply_time_diff args[0].to_time, args[1].to_time
       else
@@ -20,14 +20,16 @@ module DeltaT
     end
 
     UNITS.each_index do |index|
-      define_method ("total_" + UNITS[index].to_s).to_sym do
-        sum = 0
-        i = index
-        while i < UNITS.length
-          sum += @diff[i].send UNITS[i]
-          i += 1
+      unless index == 0
+        define_method ("total_" + UNITS[index].to_s).to_sym do
+          sum = 0
+          i = index
+          while i < UNITS.length
+            sum += @diff[i].send UNITS[i]
+            i += 1
+          end
+          sum / 1.send(UNITS[index])
         end
-        sum / 1.send(UNITS[index])
       end
     end
 
@@ -76,11 +78,11 @@ module DeltaT
     end
 
     def to_f
-      to_i.to_f
+      to_i.to_f + @diff[0] * 0.000000001
     end
 
     def coerce other
-      return other, self.total_seconds
+      return other, self.to_f
     end
 
     def to_hash
@@ -94,7 +96,7 @@ module DeltaT
     protected
 
     def apply_time_diff ending, start
-      @diff = [ending.sec - start.sec, ending.min - start.min, ending.hour - start.hour, ending.day - start.day, ending.month - start.month, ending.year - start.year]
+      @diff = [ending.nsec - start.nsec, ending.sec - start.sec, ending.min - start.min, ending.hour - start.hour, ending.day - start.day, ending.month - start.month, ending.year - start.year]
       normalize! start
     end
 
@@ -132,6 +134,8 @@ module DeltaT
     def self.get_ratio numerator_unit, denominator_unit, base_date=nil
       if base_date && numerator_unit == :months && denominator_unit == :days
         Time.days_in_month base_date.month, base_date.year
+      elsif denominator_unit == :n_secs
+        (1.send(numerator_unit) * 1000000000).round
       else
         (1.send(numerator_unit) / 1.send(denominator_unit)).round
       end
