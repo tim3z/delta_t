@@ -77,6 +77,9 @@ Concluding: the following equation should always be true
     (sometime - othertime) + othertime == sometime # => true
 
 
+For further examples have a look into the tests
+
+
 ## Contributing
 
 1. Fork it
