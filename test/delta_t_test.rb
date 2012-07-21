@@ -1,15 +1,10 @@
 require File.dirname(__FILE__) + '/helper'
 
-class DeltaT::TimeDiff
-  # exposing internals for better testing
-  # nano secs are ignored cause they are just implemented for compatibility with old play time diff
-  # current implementation: [y,m,d,h,m,s]
-  def diff
-    @diff.reverse[0..-2]
-  end
-end
-
 class DeltaTTest < Test::Unit::TestCase
+
+  def assert_components expected, actual
+    assert_equal expected, [actual.years, actual.months, actual.days, actual.hours, actual.minutes, actual.seconds]
+  end
 
   # caution - depends on current time so if buggy non deterministic
   def test_simple_difference
@@ -24,19 +19,19 @@ class DeltaTTest < Test::Unit::TestCase
   end
 
   def test_overlapping_difference
-    assert_equal [0,0,0,0,0,2], DeltaT::TimeDiff.new(Time.new(2000, 1, 1, 0, 1 , 1), Time.new(2000, 1, 1, 0, 0, 59)).diff
-    assert_equal [0,0,2,0,0,0], DeltaT::TimeDiff.new(Time.new(2000, 2, 1), Time.new(2000, 1, 30)).diff
+    assert_components [0,0,0,0,0,2], DeltaT::TimeDiff.new(Time.new(2000, 1, 1, 0, 1 , 1), Time.new(2000, 1, 1, 0, 0, 59))
+    assert_components [0,0,2,0,0,0], DeltaT::TimeDiff.new(Time.new(2000, 2, 1), Time.new(2000, 1, 30))
   end
 
   def test_negative_difference
-    assert_equal [1, 2, 10, 0, 3, 2], DeltaT::TimeDiff.new(Time.new(2001, 6, 15, 10, 4, 1), Time.new(2000, 4, 5, 10, 0, 59)).diff
-    assert_equal [-1, -2, -10, 0, -3, -2], DeltaT::TimeDiff.new(Time.new(2000, 4, 5, 10, 0, 59), Time.new(2001, 6, 15, 10, 4, 1)).diff
+    assert_components [1, 2, 10, 0, 3, 2], DeltaT::TimeDiff.new(Time.new(2001, 6, 15, 10, 4, 1), Time.new(2000, 4, 5, 10, 0, 59))
+    assert_components [-1, -2, -10, 0, -3, -2], DeltaT::TimeDiff.new(Time.new(2000, 4, 5, 10, 0, 59), Time.new(2001, 6, 15, 10, 4, 1))
   end
 
   def test_init
-    assert_equal [1,2,3,4,5,6], DeltaT::TimeDiff.new(years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6).diff
-    assert_equal [1,0,3,0,0,0], DeltaT::TimeDiff.new(years: 1, days: 3).diff
-    assert_equal [1,0,0,0,0,0], DeltaT::TimeDiff.new(years: 1).diff
+    assert_components [1,2,3,4,5,6], DeltaT::TimeDiff.new(years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6)
+    assert_components [1,0,3,0,0,0], DeltaT::TimeDiff.new(years: 1, days: 3)
+    assert_components [1,0,0,0,0,0], DeltaT::TimeDiff.new(years: 1)
   end
 
   def test_equals
@@ -54,9 +49,9 @@ class DeltaTTest < Test::Unit::TestCase
   end
 
   def test_normalization
-    assert_equal [0,1,21,0,0,0], DeltaT::TimeDiff.new(days: 51).diff
-    assert_equal [0,1,10,18,5,0], DeltaT::TimeDiff.new(minutes: 60*24*40 + 60*18 + 5).diff
-    assert_equal [0,-1,-10,-18,-5,0], DeltaT::TimeDiff.new(minutes: -(60*24*40 + 60*18 + 5)).diff
+    assert_components [0,1,21,0,0,0], DeltaT::TimeDiff.new(days: 51)
+    assert_components [0,1,10,18,5,0], DeltaT::TimeDiff.new(minutes: 60*24*40 + 60*18 + 5)
+    assert_components [0,-1,-10,-18,-5,0], DeltaT::TimeDiff.new(minutes: -(60*24*40 + 60*18 + 5))
   end
 
   def test_to_hash
@@ -65,9 +60,9 @@ class DeltaTTest < Test::Unit::TestCase
   end
 
   def test_operators
-    assert_equal [1,3,0,0,0,0], (DeltaT::TimeDiff.new(months: 11) + DeltaT::TimeDiff.new(months: 4)).diff
-    assert_equal [0,7,0,0,0,0], (DeltaT::TimeDiff.new(months: 11) - DeltaT::TimeDiff.new(months: 4)).diff
-    assert_equal [2,9,0,0,0,0], (DeltaT::TimeDiff.new(months: 11) * 3).diff
+    assert_components [1,3,0,0,0,0], (DeltaT::TimeDiff.new(months: 11) + DeltaT::TimeDiff.new(months: 4))
+    assert_components [0,7,0,0,0,0], (DeltaT::TimeDiff.new(months: 11) - DeltaT::TimeDiff.new(months: 4))
+    assert_components [2,9,0,0,0,0], (DeltaT::TimeDiff.new(months: 11) * 3)
   end
 
   def test_comparison_operators
