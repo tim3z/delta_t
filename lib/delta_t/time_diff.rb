@@ -30,7 +30,7 @@ module DeltaT
             sum += @diff[i].send UNITS[i]
             i += 1
           end
-          sum / 1.send(UNITS[index])
+          sum.to_i / 1.send(UNITS[index]).to_i
         end
       end
     end
