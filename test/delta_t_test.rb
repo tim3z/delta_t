@@ -70,6 +70,15 @@ class DeltaTTest < Test::Unit::TestCase
     assert_equal [2,9,0,0,0,0], (DeltaT::TimeDiff.new(months: 11) * 3).diff
   end
 
+  def test_comparison_operators
+    assert DeltaT::TimeDiff.new(months: 1) < DeltaT::TimeDiff.new(days: 35)
+    assert DeltaT::TimeDiff.new(days: 35) > DeltaT::TimeDiff.new(months: 1)
+
+    assert DeltaT::TimeDiff.new(hours: 3) <= DeltaT::TimeDiff.new(minutes: 180)
+    assert DeltaT::TimeDiff.new(hours: 3) <= DeltaT::TimeDiff.new(minutes: 180, seconds: 5)
+    assert !(DeltaT::TimeDiff.new(hours: 3) >= DeltaT::TimeDiff.new(minutes: 180, seconds: 5))
+  end
+
   def test_time_operators
     before = Time.new 2001, 4, 3, 12, 23, 55
     after = Time.new 2012, 12, 21, 0, 0, 0

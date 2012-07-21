@@ -45,6 +45,10 @@ module DeltaT
       eql
     end
 
+<<<<<<< HEAD
+    ##
+    # Either adds two TimeDiffs together or advances a time by this TimeDiff
+=======
     def < other
       to_f < other.to_f
     end
@@ -61,8 +65,7 @@ module DeltaT
       !(self < other)
     end
 
-    ##
-    # Either adds two TimeDiffs together or advances a time by this TimeDiff
+>>>>>>> comparison operators
     def + other
       if other.class == TimeDiff
         TimeDiff.new(other.to_hash).add_array @diff
