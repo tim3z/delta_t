@@ -127,6 +127,10 @@ module DeltaT
       h
     end
 
+    def to_s
+      to_f.to_s
+    end
+
     protected
 
     def apply_time_diff ending, start
