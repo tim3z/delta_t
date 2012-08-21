@@ -113,10 +113,6 @@ module DeltaT
       to_i.to_f + @diff[0] * 0.000000001
     end
 
-    def coerce other
-      return other, self.to_f
-    end
-
     ##
     # Returns an hash with all different time durations with each ones value
     def to_hash
@@ -129,6 +125,14 @@ module DeltaT
 
     def to_s
       to_f.to_s
+    end
+
+    def coerce other
+      return other, self.to_f
+    end
+
+    def method_missing m, *args, &block
+      to_f.send m, *args, &block
     end
 
     protected
