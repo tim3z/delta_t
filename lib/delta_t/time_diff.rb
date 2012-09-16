@@ -1,5 +1,6 @@
 module DeltaT
   class TimeDiff
+    include Comparable
     UNITS = [:n_secs, :seconds, :minutes, :hours, :days, :months, :years]
 
     ##
@@ -35,30 +36,8 @@ module DeltaT
       end
     end
 
-    ##
-    # checks if two TimeDiffs are equal
-    def == other
-      eql = true
-      UNITS.each do |unit|
-        eql &= send(unit) == other.send(unit)
-      end
-      eql
-    end
-
-    def < other
-      to_f < other.to_f
-    end
-
-    def > other
-      other < self
-    end
-
-    def <= other
-      !(self > other)
-    end
-
-    def >= other
-      !(self < other)
+    def <=> other
+      to_f <=> other.to_f
     end
 
     ##
