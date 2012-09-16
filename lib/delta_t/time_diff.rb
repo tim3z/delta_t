@@ -3,9 +3,9 @@ module DeltaT
     UNITS = [:n_secs, :seconds, :minutes, :hours, :days, :months, :years]
 
     ##
-    # Create a new TimeDiff either by two Time like objects or an hash with values for the time units (keys: seconds, minutes, hours, days, months, years)
+    # Create a new TimeDiff either by two Time like ob()jects or an hash with values for the time units (keys: seconds, minutes, hours, days, months, years)
     def initialize *args
-      if args.size == 1 && args[0].class == Hash
+      if args.size == 1 && args[0].is_a?(Hash)
         @diff = [0,0,0,0,0,0,0]
         add_array [0, args[0][:seconds], args[0][:minutes], args[0][:hours], args[0][:days], args[0][:months], args[0][:years]]
       elsif args.size == 2 && args[0].respond_to?(:to_time) && args[1].respond_to?(:to_time)
@@ -23,7 +23,7 @@ module DeltaT
 
     UNITS.each_index do |index|
       unless index == 0
-        define_method ("total_" + UNITS[index].to_s).to_sym do
+        define_method :"total_#{UNITS[index]}" do
           sum = 0
           i = index
           while i < UNITS.length
@@ -76,19 +76,14 @@ module DeltaT
     ##
     # Subtracts the other TimeDiff from this one
     def - other
-      if other.class == TimeDiff
-        self + (-other)
-      else
-        raise ArgumentError, "Only subtraction of TimeDiffs possible", caller
-      end
+      raise ArgumentError, "Only subtraction of TimeDiffs possible", caller unless other.is_a? TimeDiff
+      self + (-other)
     end
 
     ##
     # multiplies the duration of this TimeDiff with the given scalar. Must be an integer
     def * scalar
-      unless scalar.integer?
-        raise ArgumentError, "Only integer calculations possible", caller
-      end
+      raise ArgumentError, "Only integer calculations possible", caller unless scalar.is_a? Integer
       h = to_hash
       h.each { |k, v| h[k] = v * scalar }
       result = TimeDiff.new h
